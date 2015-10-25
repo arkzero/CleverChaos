@@ -26,7 +26,7 @@ var CVCS = CVCS || {};
    * Player Object used throughout the App.
    * Contains a platers personal info as well as information on games and computers
    */
-  CVCS.player = function () {
+  CVCS.Player = function () {
     this._id = CVCS.generateGUID();     // Unique ID
     this.name = "Player Name";          // Name or Alias of Player
     this.games = [];                    // Array of playerGame Objects. Contains informaiton
@@ -41,7 +41,7 @@ var CVCS = CVCS || {};
    * A Merged Objcet used to populate the GAMES array in the PLAYER object.
    * Holds both the GAME's info, and some information specific to that PLAYER
    */
-  CVCS.playerGame = function () {
+  CVCS.PlayerGame = function () {
     this._id = CVCS.generateGUID();   // Unique ID
 
     this.gameId = '';                 // ID of Associated Game
@@ -57,7 +57,7 @@ var CVCS = CVCS || {};
    * Game Object used throughout the site
    * TODO: Pull games and metadata from Steam API
    */
-  CVCS.game = function () {
+  CVCS.Game = function () {
     this._id = CVCS.generateGUID();   // Unique ID
 
     this.name = 'Game Name';          // Name of the game
@@ -76,7 +76,7 @@ var CVCS = CVCS || {};
    * Computer object that is owned by a player
    * Contians information on the computer and it's relative spcs and ratings.
    */
-  CVCS.computer = function () {
+  CVCS.Computer = function () {
     this._id = CVCS.generateGUID();     // Unique ID
 
     this.name = 'Computer Name';        // Name of the computer to distinguish it
@@ -96,7 +96,7 @@ var CVCS = CVCS || {};
                                         //   main computer or a backup they brought.
   }
 
-  CVCS.team = function () {
+  CVCS.Team = function () {
     this._id = CVCS.generateGUID();     // Unique ID
 
     this.name = 'Basement Team';        // Name of the team, typically where it's located or

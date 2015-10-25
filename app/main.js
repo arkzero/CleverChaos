@@ -4,6 +4,7 @@
   // Declare app level module which depends on views, and components
   angular.module('CleverChaos', [
     'ui.router',
+    'CleverChaos.modelHelpers',
     'CleverChaos.seatingPlan'
   ]).
 
