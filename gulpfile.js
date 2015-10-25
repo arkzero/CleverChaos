@@ -28,6 +28,7 @@ var jsLocations = [
   './app/bower_components/angular/angular.js',
   './app/bower_components/angular-ui-router/release/angular-ui-router.js',
   './app/main.js',
+  './app/models/*.js',
   './app/components/**/*.js',
   './app/seatingPlan/*.js',
 ]
