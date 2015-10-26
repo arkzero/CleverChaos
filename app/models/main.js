@@ -26,15 +26,17 @@ var CVCS = CVCS || {};
    * Player Object used throughout the App.
    * Contains a platers personal info as well as information on games and computers
    */
-  CVCS.Player = function () {
-    this._id = CVCS.generateGUID();     // Unique ID
-    this.name = "Player Name";          // Name or Alias of Player
-    this.games = [];                    // Array of playerGame Objects. Contains informaiton
-                                        //   on time played and relative skill
-    this.computers = [];                // Array of computer computer objects
-    this.avatar = '';                   // URL to User Avatar
-                                        //   TODO: Add default user avatar and make default URL
-                                        //   TODO: Actually remotely implemnt avatars.
+  CVCS.Player = function (player) {
+    player = player || {};
+
+    this._id = player._id || CVCS.generateGUID();       // Unique ID
+    this.name = player.name || "Player Name";           // Name or Alias of Player
+    this.games = player.games || [];                    // Array of playerGame Objects. Contains informaiton
+                                                        //   on time played and relative skill
+    this.computers = player.computers || [];            // Array of computer computer objects
+    this.avatar = player. avatar || '';                 // URL to User Avatar
+                                                        //   TODO: Add default user avatar and make default URL
+                                                        //   TODO: Actually remotely implemnt avatars.
   }
 
   /**
@@ -70,6 +72,19 @@ var CVCS = CVCS || {};
                                       //   TODO: Get From steam or another source.
     this.steamId = null;              // ID of the game in Steam's System
                                       //   TODO: Figure out how to get game data from steam
+    this.price = 0.0;                 // Price of the game.
+                                      //   TODO: Get from Steam
+  }
+
+  /**
+   * Future-Proof Wrapper for Games for when there are multiple groups of players
+   * @constructor
+   */
+  CVCS.OrganizationGame = function () {
+    this._id = CVCS.generateGUID;   // Unique ID
+
+    this.gameId = '';               // ID of related game
+    this.numOwners = 0;             // Number of people that have game.
   }
 
   /**
