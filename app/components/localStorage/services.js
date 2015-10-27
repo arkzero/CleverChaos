@@ -114,6 +114,24 @@ var CVCS = CVCS || {};
       },
 
       /**
+       * Removes all data from a saved collection resetting it to an empty array
+       *
+       * @param dataType - {String} Collection to clear
+       */
+      resetDataCollection: function (dataType) {
+        this.setDataCollection(dataType, []);
+      },
+
+      /**
+       * Removes all of the user's data from LocalStorage
+       */
+      removeAllData: function () {
+        if (hasLocalStorage) {
+          localStorage.removeItem(uid);
+        }
+      },
+
+      /**
        * Gets an item by Id from LocalStorage
        *
        * @param id - Id of the Item to retrieve
@@ -160,6 +178,24 @@ var CVCS = CVCS || {};
 
             // Save Changes to Local Storage
             collection[index] = item;
+            this.setDataCollection(dataType, collection);
+          }
+        }
+      },
+
+      removeDataItem: function (itemId, dataType) {
+        var collection;
+
+        if (hasLocalStorage) {
+
+          // Get the collection from Local Storage
+          collection = this.getDataCollection(dataType);
+
+          if (collection) {
+            _.remove(collection, function (item) {
+              return item._id === itemId;
+            });
+            console.log(collection)
             this.setDataCollection(dataType, collection);
           }
         }

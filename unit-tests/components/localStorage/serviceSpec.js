@@ -43,6 +43,23 @@ var CVCS = CVCS || {};
         expect(angular.equals(playerCollection[0], player)).toBeTruthy();
       });
 
+      it ('should be able to reset a collection of data in localStorage', function () {
+        var player = {name: 'Player 1'};
+        service.setDataCollection('players', [player]);
+        var playerCollection = service.getDataCollection('players');
+        expect(playerCollection.length).toBe(1);
+        service.resetDataCollection('players');
+        playerCollection = service.getDataCollection('players');
+        expect(playerCollection.length).toBe(0);
+      });
+
+      it('should be able to remove all of a user\'s data from localStorage', function () {
+        var player = {name: 'Player 1'};
+        service.setDataCollection('players', [player]);
+        service.removeAllData();
+        expect(JSON.parse(localStorage.getItem('karmatests'))).toBeNull();
+      });
+
       it ('should be able to save and retrieve single items from localStorage', function () {
         var player = {_id: '012', name: 'Bryan'};
         service.setDataItem(player, 'players');
@@ -54,6 +71,15 @@ var CVCS = CVCS || {};
         savedPlayer = service.getDataItem('012', 'players');
         expect(angular.equals(savedPlayer, player)).toBeTruthy();
       });
+
+      it('should be able to remove an item from localStorage', function () {
+        var player = {_id: '012', name: 'Jimmy'};
+        service.setDataItem(player, 'players');
+        expect(JSON.parse(localStorage.getItem('karmatests')).players.length).toBe(1);
+        expect(JSON.parse(localStorage.getItem('karmatests')).players[0].name).toBe('Jimmy');
+        service.removeDataItem(player._id, 'players');
+        expect(JSON.parse(localStorage.getItem('karmatests')).players.length).toBe(0);
+      })
 
     });
 
