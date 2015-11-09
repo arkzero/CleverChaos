@@ -183,6 +183,11 @@ var CVCS = CVCS || {};
         }
       },
 
+      /**
+       * Removes and items from localStorage by Id
+       * @param itemId - {String} ID of item to delete
+       * @param dataType - {String} Collection item belongs to
+       */
       removeDataItem: function (itemId, dataType) {
         var collection;
 
@@ -192,10 +197,11 @@ var CVCS = CVCS || {};
           collection = this.getDataCollection(dataType);
 
           if (collection) {
-            _.remove(collection, function (item) {
-              return item._id === itemId;
-            });
-            console.log(collection)
+
+            // Remove the item by it's ID
+            _.remove(collection, {_id: itemId});
+
+            // Update Data Collection
             this.setDataCollection(dataType, collection);
           }
         }

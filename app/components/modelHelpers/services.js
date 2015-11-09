@@ -9,59 +9,166 @@ var CVCS = CVCS || {};
 
   var module = angular.module('CleverChaos.modelHelpers', ['CleverChaos.localStorage']);
 
-  module.factory('Players', ['StorageService', '$q', function (StorageService, $q) {
+  // TODO: Break out into another generic plugic model with Storage Service
+  module.factory('ModelHelper', ['StorageService', '$q', function (StorageService, $q) {
 
     return {
 
       /**
-       * Creates a new Player object
-       * @returns {CVCS.Player}
+       * Generates a set of a CRUD based funcitons for a collection type.
+       * CRUD is currently done with LocalStorage
+       *
+       * @param Model - Model of collection
+       * @param collection [String] - Key for collection in localStorage
+       * @returns {{}}
        */
-      createNew: function () {
-        return new CVCS.Player();
-      },
+      generateCRUDFunctions: function (Model, collection) {
+        var crudObject = {};
 
-      /**
-       * Gets a player object by ID. Currently from Local Storage, eventually from backend
-       * @param id
-       * @returns {Promise} -> {CVCS.Player
-       */
-      get: function (id) {
-        var deferred = $q.defer(),
-            player;
+        /**
+         * Creates a new Model Provided to helper
+         * @returns {*}
+         */
+        crudObject.createNew = function () {
+          return new Model();
+        };
 
-        // Gets Player object from localStorage and makes it a Player Object
-        player = StorageService.getDataItem(id, 'players');
-        player = new CVCS.Player(player);
+        /**
+         * Gets a provided Model by id from stored collection.
+         * @param id
+         * @returns {Promis} -> {Model}
+         */
+        crudObject.get = function (id) {
+          var deferred = $q.defer(),
+              item;
 
-        // Resolve and return promise.  Future proofing for when API is in place.
-        deferred.resolve(player);
-        return deferred.promise;
-      },
+          // Gets provided Model from localStorage and makes it a provided Model
+          item = StorageService.getDataItem(id, collection);
+          if (item) {
+            item = new Model(item);
+          } else {
+            item = null;
+          }
 
-      /**
-       * Saves a Player Object, currently to localStorage, eventually to a backend
-       * @param player - Player to save
-       * @returns {Promise} -> {CVCS.Player}
-       */
-      save: function (player) {
-        var deferred = $q.defer();
+          // Resolve and return promise.  Future proofing for when API is in place.
+          deferred.resolve(item);
+          return deferred.promise;
+        };
 
-        // Save Player to LocalStorage
-        StorageService.setDataItem(player, 'players');
+        /**
+         * Saves a Provided Model, currently to localStorage, eventually to a backend
+         * @param player - Model to save
+         * @returns {Promise} -> {Model}
+         */
+        crudObject.save = function (item) {
+          var deferred = $q.defer();
 
-        // Resolve and return promise.  Future proofing for when API is in place.
-        deferred.resolve(player);
-        return deferred.promise;
-      },
+          // Save Player to LocalStorage
+          StorageService.setDataItem(item, collection);
 
-      delete: function (player) {
-        var deferred = $q.defer();
+          // Resolve and return promise.  Future proofing for when API is in place.
+          deferred.resolve(item);
+          return deferred.promise;
+        };
 
-        
+        /**
+         * Deletes a player object from Database
+         * @param item - Model Object or ID to delete
+         * @returns {Promise} -> {String}
+         */
+        crudObject.delete = function (item) {
+          var deferred = $q.defer(), itemId;
+
+          // Grab ID from player object, or just use passed in ID
+          if (angular.isObject(item) && item._id) {
+            itemId = item._id;
+          } else if (typeof player === 'string') {
+            itemId = item;
+          } else {
+            itemId = null;
+          }
+
+          if (itemId) {
+            // Remove record from localStorage
+            StorageService.removeDataItem(item._id, collection);
+            deferred.resolve('OK');
+          } else { // Return error if nothing was passed in.
+            deferred.reject('No Object Given');
+          }
+
+          // Resolve and return promise
+          return deferred.promise;
+        },
+
+        /**
+         * Gets a collection of models
+         */
+        crudObject.getCollection = function () {
+          var deferred = $q.defer(), collectionArr;
+
+          collectionArr  = StorageService.getDataCollection(collection);
+
+          _.each(collectionArr, function (item) {
+            item = new Model(item);
+          });
+
+          deferred.resolve(collectionArr);
+
+          // Resolve and return promise
+          return deferred.promise;
+        };
+
+        return crudObject;
       }
+    };
+  }]);
 
-    }
+  module.factory('Players', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.Player, 'players'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
+  }]);
+
+  module.factory('PlayerGames', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.PlayerGame, 'playerGames'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
+  }]);
+
+  module.factory('Games', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.Game, 'games'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
+  }]);
+
+  module.factory('OrganizationGames', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.OrganizationGame, 'organizationGames'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
+  }]);
+
+  module.factory('Computers', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.Computer, 'computers'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
+  }]);
+
+  module.factory('Teams', ['StorageService', '$q', 'ModelHelper', function (StorageService, $q, ModelHelper) {
+    var crud = ModelHelper.generateCRUDFunctions(CVCS.Team, 'teams'),
+        service;
+
+    service = angular.extend({}, crud, {});
+    return service;
   }]);
 
 })(angular, CVCS);
